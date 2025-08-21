@@ -1,18 +1,21 @@
 // File: api/translate.js
-// Vercel Serverless Function (Node / ESM) with sarcastic tone + debug mode
+// Vercel Serverless Function (Node / ESM)
+// - Sarcastic/funny “corporate unfilter” tone
+// - Debug endpoint: GET /api/translate?debug=1
+// - Airtable logging (omits CreatedAt so Airtable can auto-fill Created time)
 
 export default async function handler(req, res) {
   // Parse query (for debug)
   const url = new URL(req.url, `http://${req.headers.host}`);
   const debug = url.searchParams.get('debug') === '1';
 
-  // CORS
+  // CORS (keep simple; optionally restrict to your domain)
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'POST, GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type');
   if (req.method === 'OPTIONS') return res.status(204).end();
 
-  // Debug endpoint to quickly verify env/setup without exposing secrets
+  // Debug endpoint to verify config without exposing secrets
   if (req.method === 'GET' && debug) {
     const diagnostics = {
       ok: true,
@@ -25,8 +28,9 @@ export default async function handler(req, res) {
         MODEL: process.env.MODEL || 'gpt-4o-mini (default)'
       },
       notes: [
-        'If OPENAI_API_KEY is set but you see 429/insufficient_quota, add billing/credits to your OpenAI account.',
-        'If Airtable writes fail, check PAT scope (data.records:write) and base/table IDs.'
+        'If OpenAI returns insufficient_quota, enable billing/credits.',
+        'Airtable PAT needs data.records:write scope and access to this base.',
+        'CreatedAt is not written by the app—use a Created time field in Airtable.'
       ],
       time: new Date().toISOString()
     };
@@ -79,7 +83,8 @@ export default async function handler(req, res) {
             role: 'system',
             content:
               "You are a sarcastic corporate translator. You mock HR jargon and expose what it *really* means. " +
-              "Your style is witty, irreverent, and funny. Keep answers concise (6–18 words). No preambles, no disclaimers, no emojis."
+              "Your style is witty, irreverent, and funny. Keep answers concise (6–18 words). " +
+              "No preambles, no disclaimers, no emojis."
           },
           {
             role: 'user',
@@ -102,6 +107,7 @@ export default async function handler(req, res) {
     if (!translation) return res.status(502).json({ error: 'OpenAI returned no translation' });
 
     // === 2) Airtable write (non-fatal if it fails) ===
+    // NOTE: Do NOT write CreatedAt. Use Airtable's "Created time" field instead.
     const atRes = await fetch(`https://api.airtable.com/v0/${process.env.AIRTABLE_BASE_ID}/${process.env.AIRTABLE_TABLE_ID}`, {
       method: 'POST',
       headers: {
@@ -112,12 +118,10 @@ export default async function handler(req, res) {
         records: [
           {
             fields: {
-                Phrase: phrase,
-                Translation: translation,
-                Model: model,
-                Source: 'webapp'
-                // CreatedAt: (omit – Airtable will fill a Created time field automatically)
-              }
+              Phrase: phrase,
+              Translation: translation,
+              Model: model,
+              Source: 'webapp'
             }
           }
         ]
@@ -126,7 +130,7 @@ export default async function handler(req, res) {
 
     if (!atRes.ok) {
       const atText = await atRes.text();
-      // Return translation anyway; include Airtable write diagnostics
+      // Return translation anyway; include Airtable diagnostics
       return res.status(200).json({
         translation,
         model,
