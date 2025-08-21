@@ -1,159 +1,154 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Unfilter the HR</title>
-  <meta name="description" content="Type a corporate HR phrase and get the unfiltered translation." />
-  <link rel="icon" type="image/png" href="https://personio.marketing/assets/img/favicon.png" />
-  <style>
-    /* === Align with Tray form look & feel === */
-    body { background: url(https://personio.marketing/assets/css/main/img/bg.jpg); }
-    #page { background-color: #ffffff4d; }
-    .header { display: none; }
-    section.hero { border-bottom: none; background-color: transparent; text-align: center; width: 90%; max-width: 800px; margin: 0 auto; }
-    .content h3:not(:first-child) { margin-top: 1.0em; margin-bottom: 0.8em; font-size: 32px; font-weight: 500; }
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Personio | HR Unfiltered</title>
+    <link rel="icon" type="image/png" href="https://personio.marketing/assets/img/favicon.png" />
+    <!-- Inter Font from Google -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
+    <style>
+      body {
+        margin: 0;
+        font-family: 'Inter', sans-serif;
+        background: url(https://personio.marketing/assets/css/main/img/bg.jpg) no-repeat center center/cover;
+        color: #1e293b;
+      }
 
-    section.page .page.container { width: 90%; max-width: 800px; margin: 0 auto; padding: 35px; background-color: #ffffffa8; border-radius: 20px; box-shadow: 0 10px 15px -3px rgba(0,0,0,0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03); }
-    .box:not(:last-child) { margin-bottom: 1.2rem; padding: 0px; box-shadow: none; border: none; background: transparent; }
-    .label:not(:last-child) { font-size: 1rem; font-weight: 600; color: #334155; margin-bottom: 0.5em; }
-    .content:not(:last-child) { margin-bottom: 0rem; }
+      #page {
+        background-color: #ffffffa8;
+        min-height: 100vh;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        padding: 2rem;
+      }
 
-    /* Controls */
-    .input, .textarea { vertical-align: middle; padding: 0.625rem 0.75rem; background-color: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; height: 45px; color: #1e293b; font-size: 0.875rem; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02); }
-    .select { width: 100%; }
-    .select select { vertical-align: middle; padding: 0.625rem 0.75rem; background-color: white; border: 1px solid #e2e8f0; border-radius: 0.5rem; height: 45px; width: 100%; color: #1e293b; transition: all 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
-    .select:after { top: 60%; }
+      .container {
+        width: 100%;
+        max-width: 800px;
+        background-color: #ffffffd9;
+        border-radius: 20px;
+        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -2px rgba(0, 0, 0, 0.03);
+        padding: 2rem;
+        text-align: center;
+      }
 
-    /* Buttons */
-    .button.is-primary { margin-top: 20px; background: #222; border: 1px solid #222; padding: 10px 20px; box-shadow: 0 2px 3px #00000014, 0 0 0 1px #4949452e; border-radius: 9999px; font-weight: 600; min-height: 40px; transition: 0.2s background-color ease-in-out; color: #fff; }
-    .button.is-primary:hover { background-color: #323232; border-color: #323232; }
-    .button:focus-visible { outline: 3px solid #94a3b8; outline-offset: 2px; }
+      h1 {
+        font-size: clamp(1.8rem, 4vw, 2.5rem);
+        font-weight: 700;
+        letter-spacing: -0.02em;
+        margin-bottom: 0.5rem;
+      }
 
-    /* Typography */
-    h1 { margin: 0 0 6px; font-size: clamp(28px, 4vw, 42px); letter-spacing: -0.02em; font-weight: 800; text-align: center; color: #111; }
-    .lede { color: #334155; margin: 0 0 16px; text-align: center; }
+      .instruction {
+        margin-top: 1rem;
+        font-size: clamp(1rem, 1.2vw, 1.125rem);
+        color: #334155;
+        text-align: center;
+        line-height: 1.5;
+      }
 
-    /* Input pill */
-    .pill { width: 100%; display: grid; grid-template-columns: 1fr auto; align-items: center; background: #fff; border-radius: 9999px; padding: 8px; box-shadow: 0 8px 30px rgba(0,0,0,0.08); border: 1px solid #e2e8f0; }
-    .pill input[type="text"] { border: 0; outline: none; width: 100%; font-size: clamp(16px, 2.2vw, 20px); padding: 16px 20px; background: transparent; color: #0b0f14; }
-    .pill button { border-radius: 9999px; }
+      form {
+        margin-top: 2rem;
+        display: flex;
+        flex-direction: column;
+        gap: 1rem;
+      }
 
-    /* Example chips */
-    .examples { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 20px; justify-content: center; }
-    .chip { background: #fff; border: 1px solid #222; color: #222; padding: 10px 18px; border-radius: 9999px; font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .chip:hover { background: #222; color: #fff; }
-    .chip:focus-visible { outline: 3px solid #94a3b8; outline-offset: 2px; }
+      .input {
+        padding: 0.75rem 1rem;
+        border: 1px solid #e2e8f0;
+        border-radius: 9999px;
+        font-size: 1rem;
+        width: 100%;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.02);
+      }
 
-    /* Result card */
-    .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 18px; box-shadow: 0 10px 15px -3px rgba(0,0,0,.08), 0 4px 6px -2px rgba(0,0,0,.03); display: none; gap: 10px; margin-top: 24px; }
-    .card.show { display: grid; animation: rise 180ms ease-out; }
-    @keyframes rise { from { opacity: 0; transform: translateY(6px);} to { opacity: 1; transform: translateY(0);} }
-    .row { display: flex; justify-content: space-between; gap: 12px; align-items: center; margin-bottom: 10px; }
-    .label { color: #64748b; font-size: 13px; text-transform: uppercase; letter-spacing: .08em; }
-    .result { font-size: 32px; font-weight: 500; line-height: 1.4; color: #0b0f14; margin-top: 8px; text-align: center; }
+      .input:focus {
+        border: 2px solid #222;
+        outline: none;
+      }
 
-    /* Secondary buttons */
-    .btns { display: flex; gap: 8px; justify-content: center; }
-    .ghost { background: #fff; border: 1px solid #222; color: #222; padding: 10px 18px; border-radius: 9999px; font-size: 15px; font-weight: 500; cursor: pointer; transition: background 0.2s ease, color 0.2s ease, border-color 0.2s ease; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-    .ghost:hover { background: #222; color: #fff; }
-    .ghost:focus-visible { outline: 3px solid #94a3b8; outline-offset: 2px; }
+      .button {
+        background: #222;
+        border: 1px solid #222;
+        color: #fff;
+        font-weight: 700;
+        padding: 0.75rem 1.5rem;
+        border-radius: 9999px;
+        cursor: pointer;
+        transition: background-color 0.2s ease-in-out;
+        font-size: 1rem;
+      }
 
-    /* Footer */
-    .footer { background: transparent; border-top: none; width: 100%; text-align: center; font-size: 12px; color: #334155; margin-top: 24px; }
-  </style>
-</head>
-<body>
-  <section class="page">
-    <div class="page container">
-      <header>
-        <h1>Unfilter the HR</h1>
-        <p class="lede">Type a corporate HR phrase. Get the plain‑English translation.</p>
-      </header>
+      .button:hover {
+        background-color: #323232;
+      }
 
-      <form id="form" autocomplete="off">
-        <div class="pill" role="group" aria-label="Enter a corporate phrase to translate">
-          <input id="input" name="q" type="text" placeholder="e.g., We’re streamlining processes" required />
-          <button id="go" type="submit" aria-label="Translate" class="button is-primary">Translate</button>
-        </div>
-      </form>
+      .result {
+        margin-top: 1.5rem;
+        font-size: clamp(1rem, 1.2vw, 1.125rem);
+        font-weight: 500;
+        color: #111;
+      }
 
-      <div class="examples" id="examples" aria-label="Examples"></div>
+      .powered {
+        margin-top: 2rem;
+        font-size: 0.875rem;
+        color: #64748b;
+      }
 
-      <article id="card" class="card" aria-live="polite">
-        <div class="row">
-          <div class="label">Unfiltered translation</div>
-          <div class="btns">
-            <button class="ghost" id="copyBtn" aria-label="Copy translation">Copy</button>
-            <button class="ghost" id="anotherBtn" aria-label="Try another">Shuffle</button>
-          </div>
-        </div>
-        <div class="result" id="out"></div>
-      </article>
+      /* Mobile tweaks */
+      @media (max-width: 600px) {
+        form {
+          flex-direction: column;
+        }
 
-      <footer class="footer">Powered by AI · Built for clarity</footer>
+        .button {
+          width: 100%;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div id="page">
+      <div class="container">
+        <h1>HR Unfiltered</h1>
+        <p class="instruction">
+          Feed us your finest HR Buzzwords and we'll cut the 💩 and translate it into actual human.
+        </p>
+        <form id="translateForm">
+          <input type="text" id="phraseInput" class="input" placeholder="e.g. 'We’re streamlining processes'" required />
+          <button type="submit" class="button">Unfilter it</button>
+        </form>
+        <div id="result" class="result"></div>
+        <div class="powered">⚡ Powered by AI sarcasm</div>
+      </div>
     </div>
-  </section>
 
-  <script>
-    // Example prompts
-    const examples = [
-      "We’re streamlining processes",
-      "We need to right-size the org",
-      "We’re announcing a hiring freeze",
-      "We’re investing in AI",
-      "We’re modernising HR with a new HRIS"
-    ];
-
-    // Call serverless API (works on Vercel and Netlify redirect)
-    async function aiTranslate(raw) {
-      const res = await fetch('/api/translate', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ phrase: raw })
+    <script>
+      document.getElementById("translateForm").addEventListener("submit", async (e) => {
+        e.preventDefault();
+        const phrase = document.getElementById("phraseInput").value;
+        const resultDiv = document.getElementById("result");
+        resultDiv.textContent = "Translating...";
+        try {
+          const res = await fetch("/api/translate", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ phrase }),
+          });
+          const data = await res.json();
+          if (data.translation) {
+            resultDiv.textContent = data.translation;
+          } else {
+            resultDiv.textContent = "Sorry, couldn’t translate right now.";
+          }
+        } catch (err) {
+          resultDiv.textContent = "Error connecting to translator.";
+        }
       });
-      if (!res.ok) throw new Error('Translation failed');
-      const data = await res.json();
-      return data.translation || '';
-    }
-
-    const input = document.getElementById('input');
-    const out = document.getElementById('out');
-    const card = document.getElementById('card');
-
-    function show(text) { out.textContent = text; card.classList.add('show'); }
-
-    document.getElementById('form').addEventListener('submit', async (e) => {
-      e.preventDefault();
-      const val = input.value.trim();
-      if (!val) return;
-      out.textContent = 'Translating…';
-      card.classList.add('show');
-      try { show(await aiTranslate(val)); } catch { show('Sorry, could not translate right now.'); }
-    });
-
-    document.getElementById('copyBtn').addEventListener('click', async () => {
-      const txt = out.textContent.trim(); if (!txt) return;
-      try { await navigator.clipboard.writeText(txt); alert('Copied'); } catch { alert('Copy failed'); }
-    });
-
-    document.getElementById('anotherBtn').addEventListener('click', async () => {
-      const val = input.value.trim(); if (!val) return;
-      out.textContent = 'Thinking…';
-      try { show(await aiTranslate(val)); } catch { show('Please try again later.'); }
-    });
-
-    // Render example chips
-    const exWrap = document.getElementById('examples');
-    examples.forEach(t => {
-      const b = document.createElement('button');
-      b.type = 'button'; b.className = 'chip'; b.textContent = t;
-      b.addEventListener('click', async () => {
-        input.value = t; out.textContent = 'Translating…'; card.classList.add('show');
-        try { show(await aiTranslate(t)); } catch { show('Please try again later.'); }
-      });
-      exWrap.appendChild(b);
-    });
-  </script>
-</body>
+    </script>
+  </body>
 </html>
