@@ -112,11 +112,12 @@ export default async function handler(req, res) {
         records: [
           {
             fields: {
-              Phrase: phrase,
-              Translation: translation,
-              Model: model,
-              Source: 'webapp',
-              CreatedAt: new Date().toISOString()
+                Phrase: phrase,
+                Translation: translation,
+                Model: model,
+                Source: 'webapp'
+                // CreatedAt: (omit – Airtable will fill a Created time field automatically)
+              }
             }
           }
         ]
